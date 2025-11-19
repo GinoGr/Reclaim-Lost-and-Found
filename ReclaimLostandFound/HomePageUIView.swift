@@ -9,7 +9,33 @@ import SwiftUI
 
 struct HomePageUIView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack() {
+            HStack() {
+                Spacer()
+                Text("Welcome, USER!").font(.title)
+                Spacer()
+                Spacer()
+                VStack(spacing: 10){
+                    Button( action: {
+                        print("Button was clicked")
+                    }) {
+                        Text("Join Room")
+                    }.background(.yellow).cornerRadius(5)
+                    Button( action: {
+                        print("Button was clicked")
+                    }) {
+                        Text("Create Room")
+                    }.background(.yellow).cornerRadius(5)
+                }
+                Spacer()
+            }
+            .padding()
+            .background(Color.blue)
+            .cornerRadius(20)
+            .padding()
+            .shadow(radius: 10)
+            }
+        Spacer()
     }
 }
 
