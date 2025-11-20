@@ -15,7 +15,7 @@ class Room {
     var roomNumber: Int?
     var expiration: Date?
     var location: CLLocationCoordinate2D?
-    var lostItems: [String: LostItem]? = [:]
+    var lostItems: [String: ThingLost]! = [:]
     
     
     
