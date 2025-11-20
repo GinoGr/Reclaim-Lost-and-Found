@@ -10,25 +10,31 @@ import SwiftUI
 struct HomePageUIView: View {
     var body: some View {
         VStack() {
-            HStack() {
-                Text("Welcome, USER!").font(.title)
-            }
-            .padding()
-            .background(Color.blue)
-            .cornerRadius(20)
-            .padding()
-            .shadow(radius: 10)
-            HStack() {
+            Text("Welcome, USER!").font(.title)
+                .padding()
+                .background(Color.blue)
+                .cornerRadius(20)
+                .padding()
+                .shadow(radius: 10)
+            HStack(spacing: 25) {
                 Button( action: {
                     print("Button was clicked")
                 }) {
-                    Text("Join Room")
-                }.background(.yellow).cornerRadius(5)
+                    Text("Join Room").foregroundStyle(.black)
+                }.cornerRadius(5)
+                    .padding()
+                    .background(.blue)
+                    .cornerRadius(10)
+                    .shadow(radius: 10)
                 Button( action: {
                     print("Button was clicked")
                 }) {
-                    Text("Create Room")
-                }.background(.yellow).cornerRadius(5)
+                    Text("Create Room").foregroundStyle(.black)
+                }.cornerRadius(5)
+                    .padding()
+                    .background(.blue)
+                    .cornerRadius(10)
+                    .shadow(radius: 10)
             }
         }
         Spacer()
