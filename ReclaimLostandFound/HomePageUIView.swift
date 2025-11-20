@@ -4,6 +4,9 @@
 //
 //  Created by csuftitan on 11/18/25.
 //
+//  This file contains the SwiftUI code used to create
+//  the homepage of the reClaim app
+//
 
 import SwiftUI
 
