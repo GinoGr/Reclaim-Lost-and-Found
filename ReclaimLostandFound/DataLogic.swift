@@ -15,6 +15,7 @@ class Room {
     var roomNumber: Int?
     var expiration: Date?
     var location: CLLocationCoordinate2D?
+    var lostItems: [String: LostItem]? = [:]
     
     
     
@@ -26,6 +27,29 @@ class Room {
         if let lat = latitude, let long = longitude {
             location = CLLocationCoordinate2D(latitude: lat, longitude: long)
         }
-        
+    }
+    
+    public func getRoomNumber() -> Int? {
+        return roomNumber
+    }
+    
+    public func getExpiration() -> Date? {
+        return expiration
+    }
+    
+    public func getLocation() -> CLLocationCoordinate2D? {
+        return location
+    }
+    
+    public func addLostItem(thingName: String) {
+        lostItems[thingName] = ThingLost(iName: thingName)
+    }
+}
+
+class ThingLost {
+    var itemName: String?
+    
+    init(iName: String) {
+        itemName = iName
     }
 }
