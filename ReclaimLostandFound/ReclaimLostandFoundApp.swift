@@ -14,7 +14,7 @@ struct ReclaimLostandFoundApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomePageUIView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
