@@ -1,49 +1,77 @@
-//
-//  HomePageUIView.swift
-//  ReclaimLostandFound
-//
-//  Created by csuftitan on 11/18/25.
-//
-//  This file contains the SwiftUI code used to create
-//  the homepage of the reClaim app
-//
-
 import SwiftUI
 
 struct HomePageUIView: View {
     var body: some View {
-        VStack() {
-            Text("Welcome, USER!").font(.title)
-                .padding()
-                .background(Color.blue)
-                .cornerRadius(20)
-                .padding()
-                .shadow(radius: 10)
-            HStack(spacing: 25) {
-                Button( action: {
-                    print("Button was clicked")
-                }) {
-                    Text("Join Room").foregroundStyle(.black)
-                }.cornerRadius(5)
-                    .padding()
-                    .background(.blue)
-                    .cornerRadius(10)
-                    .shadow(radius: 10)
-                Button( action: {
-                    print("Button was clicked")
-                }) {
-                    Text("Create Room").foregroundStyle(.black)
-                }.cornerRadius(5)
-                    .padding()
-                    .background(.blue)
-                    .cornerRadius(10)
-                    .shadow(radius: 10)
+        ZStack {
+            // Same background as intro
+            LinearGradient(
+                colors: [Color.black, Color.purple.opacity(0.8)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 32) {
+                // Top welcome block
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Welcome, USER!")
+                        .font(.title.bold())
+                        .foregroundColor(.white)
+
+                    Text("What would you like to do?")
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.7))
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24)
+                .padding(.top, 40)
+
+                // Big buttons
+                VStack(spacing: 16) {
+                    Button(action: {
+                        print("Join Room tapped")
+                    }) {
+                        HStack {
+                            Image(systemName: "person.2.fill")
+                            Text("Join Room")
+                                .fontWeight(.semibold)
+                            Spacer()
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.white)
+                        .foregroundColor(.black)
+                        .cornerRadius(16)
+                        .shadow(radius: 10)
+                    }
+
+                    Button(action: {
+                        print("Create Room tapped")
+                    }) {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                            Text("Create Room")
+                                .fontWeight(.semibold)
+                            Spacer()
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.white.opacity(0.7), lineWidth: 1)
+                        )
+                        .foregroundColor(.white)
+                    }
+                }
+                .padding(.horizontal, 24)
+
+                Spacer()
             }
         }
-        Spacer()
     }
 }
 
 #Preview {
     HomePageUIView()
+        .preferredColorScheme(.dark)
 }
