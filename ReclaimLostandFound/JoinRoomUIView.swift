@@ -1,6 +1,9 @@
 import SwiftUI
 
-struct HomePageUIView: View {
+struct JoinRoomUIView: View {
+    @State private var roomNumber = ""
+    @State private var roomPass = ""
+    
     var body: some View {
         ZStack {
             LinearGradient(
@@ -13,27 +16,43 @@ struct HomePageUIView: View {
             VStack(spacing: 32) {
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Welcome, USER!")
+                    Text("Join Room")
                         .font(.title.bold())
                         .foregroundColor(.white)
-
-                    Text("What would you like to do?")
-                        .font(.subheadline)
-                        .foregroundColor(.white.opacity(0.7))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 24)
                 .padding(.top, 40)
 
                 VStack(spacing: 16) {
+                    Spacer()
+                    Text("Room Number")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                    TextField("Enter Room Number", text: $roomNumber)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                    Text("Room Password")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                                    
+                    TextField("Enter Room Password", text: $roomPass)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                    Spacer()
+                    
+                    Spacer()
+                    
                     Button(action: {
                         print("Join Room tapped")
                     }) {
                         HStack {
-                            Image(systemName: "person.2.fill")
                             Text("Join Room")
                                 .fontWeight(.semibold)
-                            Spacer()
                         }
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -41,24 +60,6 @@ struct HomePageUIView: View {
                         .foregroundColor(.black)
                         .cornerRadius(16)
                         .shadow(radius: 10)
-                    }
-
-                    Button(action: {
-                        print("Create Room tapped")
-                    }) {
-                        HStack {
-                            Image(systemName: "plus.circle.fill")
-                            Text("Create Room")
-                                .fontWeight(.semibold)
-                            Spacer()
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.white.opacity(0.7), lineWidth: 1)
-                        )
-                        .foregroundColor(.white)
                     }
                 }
                 .padding(.horizontal, 24)
@@ -70,6 +71,6 @@ struct HomePageUIView: View {
 }
 
 #Preview {
-    HomePageUIView()
+    JoinRoomUIView()
         .preferredColorScheme(.dark)
 }
