@@ -12,15 +12,17 @@ import Foundation
 import CoreLocation
 
 class Room {
-    var roomNumber: Int?
+    var roomNumber: Int
     var expiration: Date?
     var location: CLLocationCoordinate2D?
     var lostItems: [String: ThingLost]! = [:]
+    var passWord: String
     
     
     
-    init(roomNum: Int, expire: Date? = nil, latitude: CLLocationDegrees? = nil, longitude: CLLocationDegrees? = nil ) {
+    init(roomNum: Int, password: String, expire: Date? = nil, latitude: CLLocationDegrees? = nil, longitude: CLLocationDegrees? = nil ) {
         roomNumber = roomNum
+        passWord = password
         if let exp = expire {
             expiration = exp
         }
