@@ -84,6 +84,17 @@ struct LoginPageUIView: View {
                     )
                 
                 Spacer()
+                Spacer()
+                
+                Button(action : {print("Login Check")}) {
+                    Text("Login")
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.white)
+                        .foregroundColor(.black)
+                        .cornerRadius(16)
+                }
                 
             }
         }
