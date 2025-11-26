@@ -1,64 +1,107 @@
-//
-//  IntroUIView.swift
-//  ReclaimLostandFound
-//
-//  Created by csuftitan on 11/25/25.
-//
-
 import SwiftUI
 
 struct IntroUIView: View {
+    @State private var animateContent = false
+    @State private var animateBackground = false
+
     var body: some View {
         ZStack {
+
             LinearGradient(
-                colors: [.black, .purple.opacity(0.8)],
+                colors: [Color.black, Color.purple.opacity(0.8)],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
+            .hueRotation(.degrees(animateBackground ? 15 : -15))
+            .animation(
+                .easeInOut(duration: 8)
+                    .repeatForever(autoreverses: true),
+                value: animateBackground
+            )
+
             VStack(spacing: 24) {
-                
+                Spacer()
+
+
                 Image(systemName: "magnifyingglass.circle.fill")
                     .font(.system(size: 80))
                     .foregroundStyle(.white)
-                
+                    .scaleEffect(animateContent ? 1.0 : 0.8)
+                    .opacity(animateContent ? 1 : 0)
+                    .shadow(radius: 12)
+                    .animation(
+                        .spring(response: 0.7, dampingFraction: 0.8),
+                        value: animateContent
+                    )
+
                 Text("Reclaim: Lost And Found")
-                    .font(Font.largeTitle.bold())
+                    .font(.largeTitle.bold())
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
-                Text("Less Searching.\nMore Finding")
-                    .font(Font.title3)
-                    .foregroundColor(.white)
+                    .opacity(animateContent ? 1 : 0)
+                    .offset(y: animateContent ? 0 : 10)
+                    .animation(
+                        .easeOut(duration: 0.6).delay(0.1),
+                        value: animateContent
+                    )
+
+
+                Text("Less searching.\nMore finding.")
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.7))
                     .multilineTextAlignment(.center)
-                
+                    .opacity(animateContent ? 1 : 0)
+                    .offset(y: animateContent ? 0 : 20)
+                    .animation(
+                        .easeOut(duration: 0.6).delay(0.2),
+                        value: animateContent
+                    )
+
                 Spacer()
-                
+
+
                 VStack(spacing: 12) {
-                    Button(action: {print("Log in")}) {
+                    Button(action: {
+                        print("Log in")
+                    }) {
                         Text("LOG IN")
                             .fontWeight(.semibold)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(.white)
+                            .background(Color.white)
                             .foregroundColor(.black)
                             .cornerRadius(16)
                     }
-                    
-                    Button(action: {print("Sign up")}) {
+
+                    Button(action: {
+                        print("Sign up")
+                    }) {
                         Text("SIGN UP")
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(Color.white.opacity(0.7), lineWidth: 1)
+                            )
+                            .foregroundColor(.white)
                     }
-                        .fontWeight(.semibold)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.white.opacity(0.7), lineWidth: 1)
-                        )
-                        .foregroundColor(.white)
                 }
+                .padding(.horizontal, 32)
+                .padding(.bottom, 40)
+                .opacity(animateContent ? 1 : 0)
+                .offset(y: animateContent ? 0 : 40)
+                .animation(
+                    .spring(response: 0.7, dampingFraction: 0.9)
+                        .delay(0.3),
+                    value: animateContent
+                )
             }
-            .padding(.horizontal, 32)
-            .padding(.bottom, 40)
+        }
+        .onAppear {
+            animateContent = true
+            animateBackground = true
         }
     }
 }
