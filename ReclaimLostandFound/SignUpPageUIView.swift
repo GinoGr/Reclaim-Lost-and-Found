@@ -97,8 +97,16 @@ struct SignUpPageUIView: View {
                         )
                         .foregroundColor(.white)
                 }
-                
             }
+            .padding(.horizontal, 32)
+            .padding(.bottom, 40)
+            .opacity(animateContent ? 1 : 0)
+            .offset(y: animateContent ? 0 : 40)
+            .animation(
+                .spring(response: 0.7, dampingFraction: 0.9)
+                    .delay(0.3),
+                value: animateContent
+            )
         }
         .onAppear {
             animateContent = true
