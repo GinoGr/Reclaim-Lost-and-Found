@@ -25,6 +25,37 @@ struct RootView: View {
     }
 }
 
+extension View {
+    func roomTextFieldStyle() -> some View {
+        self
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color.black.opacity(0.85))
+                    .shadow(color: .black.opacity(0.7), radius: 10, x: 0, y: 8)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(Color.white.opacity(0.15), lineWidth: 1)
+            )
+            .foregroundColor(.white)
+    }
+    func placeholder<Content: View>(
+            when shouldShow: Bool,
+            alignment: Alignment = .leading,
+            @ViewBuilder content: () -> Content
+        ) -> some View {
+            ZStack(alignment: alignment) {
+                self
+                if shouldShow {
+                    content()
+                }
+            }
+    }
+    
+}
+
 #Preview {
     RootView()
         .environmentObject(AppState())

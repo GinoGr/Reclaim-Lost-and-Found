@@ -34,23 +34,34 @@ struct CreateRoomUIView: View {
 
                 VStack(spacing: 16) {
                     Spacer()
-                    Text("Room Number")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                    TextField("Enter Room Number", text: $roomNumber)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                    Text("Room Password")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                                    
-                    TextField("Enter Room Password", text: $roomPass)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
+                    
+                    VStack() {
+                        Text("Room Number")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                        TextField("", text: $roomNumber)
+                            .placeholder(when: roomNumber.isEmpty) {
+                                Text("Enter Room Number")
+                                    .foregroundColor(.white.opacity(0.5))
+                                    .padding(.horizontal, 12)
+                            }
+                            .roomTextFieldStyle()
+                    }
+                    
+                    VStack() {
+                        Text("Room Password")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                        TextField("", text: $roomPass)
+                            .placeholder(when: roomPass.isEmpty) {
+                                Text("Enter Room Password")
+                                    .foregroundColor(.white.opacity(0.5))
+                                    .padding(.horizontal, 12)
+                            }
+                            .roomTextFieldStyle()
+                    }
                     
                     Toggle("Add Expiration Date", isOn: $useExpiration)
                         .toggleStyle(SwitchToggleStyle(tint: .purple))

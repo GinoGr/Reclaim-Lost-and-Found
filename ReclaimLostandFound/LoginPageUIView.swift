@@ -30,7 +30,7 @@ struct LoginPageUIView: View {
                 value: animateBackground
             )
 
-            VStack(spacing: 24) {
+            VStack(spacing: 50) {
                 Spacer()
                 Text("Welcome Back!")
                     .font(.largeTitle.bold())
@@ -43,48 +43,57 @@ struct LoginPageUIView: View {
                         value: animateContent
                     )
                 Spacer()
-                Text("UserName")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .opacity(animateContent ? 1 : 0)
-                    .offset(y: animateContent ? 0 : 10)
-                    .animation(
-                        .easeOut(duration: 0.6).delay(0.1),
-                        value: animateContent
-                    )
-                TextField("Enter Username", text: $userName)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .opacity(animateContent ? 1 : 0)
-                    .offset(y: animateContent ? 0 : 10)
-                    .animation(
-                        .easeOut(duration: 0.6).delay(0.1),
-                        value: animateContent
-                    )
+                VStack() {
+                    Text("Username")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .opacity(animateContent ? 1 : 0)
+                        .offset(y: animateContent ? 0 : 10)
+                        .animation(
+                            .easeOut(duration: 0.6).delay(0.1),
+                            value: animateContent
+                        )
+                    TextField("", text: $userName)
+                        .placeholder(when: userName.isEmpty) {
+                            Text("Enter Username")
+                                .foregroundColor(.white.opacity(0.5))
+                                .padding(.horizontal, 12)
+                        }
+                        .roomTextFieldStyle()
+                        .opacity(animateContent ? 1 : 0)
+                        .offset(y: animateContent ? 0 : 10)
+                        .animation(
+                            .easeOut(duration: 0.6).delay(0.1),
+                            value: animateContent
+                        )
+                }
                 
-                Text("Password")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .opacity(animateContent ? 1 : 0)
-                    .offset(y: animateContent ? 0 : 10)
-                    .animation(
-                        .easeOut(duration: 0.6).delay(0.1),
-                        value: animateContent
-                    )
-                TextField("Enter Password", text: $passWord)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .opacity(animateContent ? 1 : 0)
-                    .offset(y: animateContent ? 0 : 10)
-                    .animation(
-                        .easeOut(duration: 0.6).delay(0.1),
-                        value: animateContent
-                    )
-                
+                VStack() {
+                    Text("Password")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .opacity(animateContent ? 1 : 0)
+                        .offset(y: animateContent ? 0 : 10)
+                        .animation(
+                            .easeOut(duration: 0.6).delay(0.1),
+                            value: animateContent
+                        )
+                    SecureField("", text: $passWord)
+                        .placeholder(when: passWord.isEmpty) {
+                            Text("Enter Password")
+                                .foregroundColor(.white.opacity(0.5))
+                                .padding(.horizontal, 12)
+                        }
+                        .roomTextFieldStyle()
+                        .opacity(animateContent ? 1 : 0)
+                        .offset(y: animateContent ? 0 : 10)
+                        .animation(
+                            .easeOut(duration: 0.6).delay(0.1),
+                            value: animateContent
+                        )
+                }
                 Spacer()
                 Spacer()
                 
