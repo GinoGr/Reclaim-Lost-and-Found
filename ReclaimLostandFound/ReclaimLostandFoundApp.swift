@@ -10,12 +10,12 @@ import CoreData
 
 @main
 struct ReclaimLostandFoundApp: App {
-    let persistenceController = PersistenceController.shared
+    @StateObject private var appState = AppState()
 
     var body: some Scene {
         WindowGroup {
-            IntroUIView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            RootView()
+                .environmentObject(appState)
         }
     }
 }
