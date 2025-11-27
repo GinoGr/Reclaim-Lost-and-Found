@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct LoginPageUIView: View {
+    @EnvironmentObject var appState: AppState
+    
     @State private var animateContent = false
     @State private var animateBackground = false
     @State private var userName = ""
@@ -86,8 +88,8 @@ struct LoginPageUIView: View {
                 Spacer()
                 Spacer()
                 
-                Button(action : {print("Login Check")}) {
-                    Text("Login")
+                Button(action : {appState.isLoggedIn = true}) {
+                    Text("Log In")
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -96,6 +98,7 @@ struct LoginPageUIView: View {
                         .cornerRadius(16)
                 }
             }
+            .navigationTitle("Log In")
             .padding(.horizontal, 32)
             .padding(.bottom, 40)
             .opacity(animateContent ? 1 : 0)
@@ -115,4 +118,5 @@ struct LoginPageUIView: View {
 
 #Preview {
     LoginPageUIView()
+        .environmentObject(AppState())
 }
