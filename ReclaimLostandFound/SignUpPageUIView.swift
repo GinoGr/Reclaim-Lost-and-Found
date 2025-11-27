@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SignUpPageUIView: View {
+    @EnvironmentObject var appState: AppState
     @State private var animateContent = false
     @State private var animateBackground = false
     @State private var userName = ""
@@ -86,7 +87,7 @@ struct SignUpPageUIView: View {
                 Spacer()
                 Spacer()
                 
-                Button(action : {print("Sign Up Check")}) {
+                Button(action : {appState.isLoggedIn = true}) {
                     Text("Sign Up")
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
@@ -98,6 +99,7 @@ struct SignUpPageUIView: View {
                         .foregroundColor(.white)
                 }
             }
+            .navigationTitle("Sign Up")
             .padding(.horizontal, 32)
             .padding(.bottom, 40)
             .opacity(animateContent ? 1 : 0)
@@ -117,4 +119,5 @@ struct SignUpPageUIView: View {
 
 #Preview {
     SignUpPageUIView()
+        .environmentObject(AppState())
 }
