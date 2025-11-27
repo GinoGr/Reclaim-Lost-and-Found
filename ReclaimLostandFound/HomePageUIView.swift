@@ -26,30 +26,29 @@ struct HomePageUIView: View {
                 .padding(.top, 40)
 
                 VStack(spacing: 16) {
-                    Button(action: {
-                        print("Join Room tapped")
-                    }) {
+                    
+                    NavigationLink {
+                        JoinRoomUIView()
+                    } label: {
                         HStack {
                             Image(systemName: "person.2.fill")
                             Text("Join Room")
-                                .fontWeight(.semibold)
                             Spacer()
                         }
-                        .padding()
+                        .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
+                        .padding()
                         .background(Color.white)
                         .foregroundColor(.black)
                         .cornerRadius(16)
-                        .shadow(radius: 10)
                     }
-
-                    Button(action: {
-                        print("Create Room tapped")
-                    }) {
+                    
+                    NavigationLink {
+                        CreateRoomUIView()
+                    } label: {
                         HStack {
                             Image(systemName: "plus.circle.fill")
                             Text("Create Room")
-                                .fontWeight(.semibold)
                             Spacer()
                         }
                         .padding()
