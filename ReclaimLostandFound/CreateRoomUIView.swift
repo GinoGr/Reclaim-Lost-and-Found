@@ -1,8 +1,16 @@
 import SwiftUI
+import CoreLocation
+internal import Combine
 
 struct CreateRoomUIView: View {
     @State private var roomNumber = ""
     @State private var roomPass = ""
+    
+    @State private var useExpiration = false
+    @State private var expirationDate = Date()
+    
+    @State private var useLocation = false
+    @StateObject private var locationManager = LocationManager()
     
     var body: some View {
         ZStack {
@@ -43,8 +51,45 @@ struct CreateRoomUIView: View {
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
-                    Spacer()
                     
+                    Toggle("Add Expiration Date", isOn: $useExpiration)
+                        .toggleStyle(SwitchToggleStyle(tint: .purple))
+                        .padding(.horizontal)
+                    
+                    if useExpiration {
+                        DatePicker (
+                            "Expiration",
+                            selection: $expirationDate,
+                            displayedComponents: [.date, .hourAndMinute]
+                        )
+                        .labelsHidden()
+                        .padding(.horizontal)
+                    }
+                    
+                    Toggle("Attach Location", isOn: $useLocation)
+                        .toggleStyle(SwitchToggleStyle(tint: .purple))
+                        .padding(.horizontal)
+                        .onChange(of: useLocation) {value in
+                            if value {
+                                locationManager.requestLocation()
+                            }
+                        }
+                    
+                    if useLocation {
+                        if let coord = locationManager.lastCoordinate {
+                            Text("Location: \(coord.latitude), \(coord.longitude)")
+                                .font(.footnote)
+                                .foregroundColor(.white.opacity(0.7))
+                                .padding(.horizontal)
+                        } else {
+                            Text("Getting location...")
+                                .font(.footnote)
+                                .foregroundColor(.white.opacity(0.7))
+                                .padding(.horizontal)
+                        }
+                    }
+                    
+                    Spacer()
                     Spacer()
                     
                     Button(action: {
@@ -74,4 +119,32 @@ struct CreateRoomUIView: View {
 #Preview {
     CreateRoomUIView()
         .preferredColorScheme(.dark)
+}
+
+
+final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+    private let manager = CLLocationManager()
+
+    @Published var lastCoordinate: CLLocationCoordinate2D?
+
+    override init() {
+        super.init()
+        manager.delegate = self
+        manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+    }
+
+    func requestLocation() {
+        // Make sure you added NSLocationWhenInUseUsageDescription to Info.plist
+        manager.requestWhenInUseAuthorization()
+        manager.requestLocation()
+    }
+
+    // CLLocationManagerDelegate
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        lastCoordinate = locations.last?.coordinate
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Location error: \(error.localizedDescription)")
+    }
 }
