@@ -1,6 +1,9 @@
 import SwiftUI
+import Supabase
 
 struct HomePageUIView: View {
+    @EnvironmentObject var appState: AppState
+    
     var body: some View {
         ZStack {
             LinearGradient(
@@ -11,20 +14,31 @@ struct HomePageUIView: View {
             .ignoresSafeArea()
 
             VStack(spacing: 32) {
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Welcome, USER!")
-                        .font(.title.bold())
-                        .foregroundColor(.white)
-
-                    Text("What would you like to do?")
-                        .font(.subheadline)
-                        .foregroundColor(.white.opacity(0.7))
+                HStack {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Welcome, USER!")
+                            .font(.title.bold())
+                            .foregroundColor(.white)
+                        
+                        Text("What would you like to do?")
+                            .font(.subheadline)
+                            .foregroundColor(.white.opacity(0.7))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 40)
+                    Spacer()
+                    Button("Log out") {
+                                    logOut()
+                                }
+                                .padding()
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.white.opacity(0.7), lineWidth: 1)
+                                )
+                                .foregroundColor(.white)
+                    Spacer()
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 24)
-                .padding(.top, 40)
-
                 VStack(spacing: 16) {
                     
                     NavigationLink {
@@ -66,9 +80,24 @@ struct HomePageUIView: View {
             }
         }
     }
+    private func logOut() {
+        Task {
+            do {
+                try await SupabaseManager.shared.client.auth.signOut()
+                await MainActor.run {
+                    appState.isLoggedIn = false
+                }
+            } catch {
+                print("Logout error: \(error)")
+            }
+        }
+    }
 }
 
 #Preview {
-    HomePageUIView()
-        .preferredColorScheme(.dark)
+    NavigationStack {
+        HomePageUIView()
+            .preferredColorScheme(.dark)
+    }
+    .environmentObject(AppState())
 }

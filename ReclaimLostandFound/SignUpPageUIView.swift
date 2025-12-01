@@ -6,13 +6,15 @@
 //
 
 import SwiftUI
+import Supabase
 
 struct SignUpPageUIView: View {
     @EnvironmentObject var appState: AppState
     @State private var animateContent = false
     @State private var animateBackground = false
-    @State private var userName = ""
+    @State private var email = ""
     @State private var passWord = ""
+    @State private var errorMessage: String?
 
     var body: some View {
         ZStack {
@@ -43,7 +45,7 @@ struct SignUpPageUIView: View {
                     )
                 Spacer()
                 VStack() {
-                    Text("Username")
+                    Text("Email")
                         .font(.headline)
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
@@ -53,12 +55,14 @@ struct SignUpPageUIView: View {
                             .easeOut(duration: 0.6).delay(0.1),
                             value: animateContent
                         )
-                    TextField("", text: $userName)
-                        .placeholder(when: userName.isEmpty) {
-                            Text("Create Username")
+                    TextField("", text: $email)
+                        .placeholder(when: email.isEmpty) {
+                            Text("Enter Email")
                                 .foregroundColor(.white.opacity(0.5))
                                 .padding(.horizontal, 12)
                         }
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.emailAddress)
                         .roomTextFieldStyle()
                         .opacity(animateContent ? 1 : 0)
                         .offset(y: animateContent ? 0 : 10)
@@ -92,22 +96,37 @@ struct SignUpPageUIView: View {
                             .easeOut(duration: 0.6).delay(0.1),
                             value: animateContent
                         )
+                    
+                    if let errorMessage = errorMessage {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .font(.footnote)
+                            .opacity(animateContent ? 1 : 0)
+                            .offset(y: animateContent ? 0 : 10)
+                            .animation(
+                                .easeOut(duration: 0.6).delay(0.1),
+                                value: animateContent
+                            )
+                    }
                 }
                 
                 Spacer()
                 Spacer()
                 
-                Button(action : {appState.isLoggedIn = true}) {
-                    Text("Sign Up")
-                        .fontWeight(.semibold)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.white.opacity(0.7), lineWidth: 1)
-                        )
-                        .foregroundColor(.white)
+                Button("Sign Up") {
+                    Task {
+                        await signUp()
+                    }
+                        
                 }
+                .fontWeight(.semibold)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.white.opacity(0.7), lineWidth: 1)
+                )
+                .foregroundColor(.white)
             }
             .navigationTitle("Sign Up")
             .padding(.horizontal, 32)
@@ -123,6 +142,24 @@ struct SignUpPageUIView: View {
         .onAppear {
             animateContent = true
             animateBackground = true
+        }
+    }
+    private func signUp() async {
+        do {
+            let client = SupabaseManager.shared.client
+
+            _ = try await client.auth.signUp(
+                email: email,
+                password: passWord
+            )
+
+            await MainActor.run {
+                appState.isLoggedIn = true
+            }
+        } catch {
+            await MainActor.run {
+                errorMessage = error.localizedDescription
+            }
         }
     }
 }

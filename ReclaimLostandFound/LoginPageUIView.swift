@@ -6,14 +6,16 @@
 //
 
 import SwiftUI
+import Supabase
 
 struct LoginPageUIView: View {
     @EnvironmentObject var appState: AppState
     
     @State private var animateContent = false
     @State private var animateBackground = false
-    @State private var userName = ""
+    @State private var email = ""
     @State private var passWord = ""
+    @State private var errorMessage: String?
 
     var body: some View {
         ZStack {
@@ -44,7 +46,7 @@ struct LoginPageUIView: View {
                     )
                 Spacer()
                 VStack() {
-                    Text("Username")
+                    Text("Email")
                         .font(.headline)
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
@@ -54,9 +56,11 @@ struct LoginPageUIView: View {
                             .easeOut(duration: 0.6).delay(0.1),
                             value: animateContent
                         )
-                    TextField("", text: $userName)
-                        .placeholder(when: userName.isEmpty) {
-                            Text("Enter Username")
+                    TextField("", text: $email)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.emailAddress)
+                        .placeholder(when: email.isEmpty) {
+                            Text("Enter Email")
                                 .foregroundColor(.white.opacity(0.5))
                                 .padding(.horizontal, 12)
                         }
@@ -93,19 +97,34 @@ struct LoginPageUIView: View {
                             .easeOut(duration: 0.6).delay(0.1),
                             value: animateContent
                         )
+                    if let errorMessage = errorMessage {
+                        Text(errorMessage)
+                            .font(.footnote)
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                            .opacity(animateContent ? 1 : 0)
+                            .offset(y: animateContent ? 0 : 10)
+                            .animation(
+                                .easeOut(duration: 0.6).delay(0.1),
+                                value: animateContent
+                            )
+                    }
                 }
                 Spacer()
                 Spacer()
                 
-                Button(action : {appState.isLoggedIn = true}) {
-                    Text("Log In")
-                        .fontWeight(.semibold)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.white)
-                        .foregroundColor(.black)
-                        .cornerRadius(16)
+                Button("Log In") {
+                    Task {
+                        await logIn()
+                    }
                 }
+                .fontWeight(.semibold)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.white)
+                .foregroundColor(.black)
+                .cornerRadius(16)
+
             }
             .navigationTitle("Log In")
             .padding(.horizontal, 32)
@@ -123,9 +142,28 @@ struct LoginPageUIView: View {
             animateBackground = true
         }
     }
+    private func logIn() async {
+        do {
+            let client = SupabaseManager.shared.client
+
+            _ = try await client.auth.signIn(
+                email: email,
+                password: passWord
+            )
+
+            await MainActor.run {
+                appState.isLoggedIn = true
+            }
+        } catch {
+            await MainActor.run {
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
 }
 
 #Preview {
     LoginPageUIView()
         .environmentObject(AppState())
 }
+
