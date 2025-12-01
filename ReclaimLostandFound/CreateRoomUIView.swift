@@ -3,7 +3,7 @@ import CoreLocation
 internal import Combine
 
 struct CreateRoomUIView: View {
-    @State private var roomNumber = ""
+    @State private var roomName = ""
     @State private var roomPass = ""
     
     @State private var useExpiration = false
@@ -36,13 +36,13 @@ struct CreateRoomUIView: View {
                     Spacer()
                     
                     VStack() {
-                        Text("Room Number")
+                        Text("Room Name")
                             .font(.headline)
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
-                        TextField("", text: $roomNumber)
-                            .placeholder(when: roomNumber.isEmpty) {
-                                Text("Enter Room Number")
+                        TextField("", text: $roomName)
+                            .placeholder(when: roomName.isEmpty) {
+                                Text("Enter Room Name")
                                     .foregroundColor(.white.opacity(0.5))
                                     .padding(.horizontal, 12)
                             }
