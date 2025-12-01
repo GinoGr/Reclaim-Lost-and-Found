@@ -15,6 +15,9 @@ struct SignUpPageUIView: View {
     @State private var email = ""
     @State private var passWord = ""
     @State private var errorMessage: String?
+    @State private var confirmation: String?
+    @State private var isPasswordVisible: Bool = false
+
 
     var body: some View {
         ZStack {
@@ -83,20 +86,55 @@ struct SignUpPageUIView: View {
                             .easeOut(duration: 0.6).delay(0.1),
                             value: animateContent
                         )
-                    TextField("", text: $passWord)
-                        .placeholder(when: passWord.isEmpty) {
-                            Text("Create Password")
-                                .foregroundColor(.white.opacity(0.5))
-                                .padding(.horizontal, 12)
+                    ZStack {
+                        if(!isPasswordVisible) {
+                            SecureField("", text: $passWord)
+                                .placeholder(when: passWord.isEmpty) {
+                                    Text("Enter Password")
+                                        .foregroundColor(.white.opacity(0.5))
+                                        .padding(.horizontal, 12)
+                                }
+                                .roomTextFieldStyle()
+                                .opacity(animateContent ? 1 : 0)
+                                .offset(y: animateContent ? 0 : 10)
+                                .animation(
+                                    .easeOut(duration: 0.6).delay(0.1),
+                                    value: animateContent
+                                )
                         }
-                        .roomTextFieldStyle()
-                        .opacity(animateContent ? 1 : 0)
-                        .offset(y: animateContent ? 0 : 10)
-                        .animation(
-                            .easeOut(duration: 0.6).delay(0.1),
-                            value: animateContent
-                        )
-                    
+                        else {
+                            TextField("", text: $passWord)
+                                .placeholder(when: passWord.isEmpty) {
+                                    Text("Enter Password")
+                                        .foregroundColor(.white.opacity(0.5))
+                                        .padding(.horizontal, 12)
+                                }
+                                .roomTextFieldStyle()
+                                .opacity(animateContent ? 1 : 0)
+                                .offset(y: animateContent ? 0 : 10)
+                                .animation(
+                                    .easeOut(duration: 0.6).delay(0.1),
+                                    value: animateContent
+                                )
+                        }
+                        HStack {
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Button(action: {
+                                isPasswordVisible.toggle()
+                            }) {
+                                Image(systemName: isPasswordVisible ?  "eye.fill" :  "eye.slash.fill")
+                                    .foregroundColor(.gray)
+                            }
+                            Spacer()
+                        }
+                    }
                     if let errorMessage = errorMessage {
                         Text(errorMessage)
                             .foregroundColor(.red)
@@ -107,6 +145,12 @@ struct SignUpPageUIView: View {
                                 .easeOut(duration: 0.6).delay(0.1),
                                 value: animateContent
                             )
+                    }
+                    if let confirmation = confirmation {
+                        Text(confirmation)
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
                     }
                 }
                 
@@ -152,10 +196,7 @@ struct SignUpPageUIView: View {
                 email: email,
                 password: passWord
             )
-
-            await MainActor.run {
-                appState.isLoggedIn = true
-            }
+            confirmation = "Check your email for account creation"
         } catch {
             await MainActor.run {
                 errorMessage = error.localizedDescription
