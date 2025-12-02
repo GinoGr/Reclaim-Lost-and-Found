@@ -47,7 +47,7 @@ struct SignUpPageUIView: View {
                         value: animateContent
                     )
                 Spacer()
-                VStack() {
+                VStack(spacing: 25) {
                     Text("Email")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -75,7 +75,7 @@ struct SignUpPageUIView: View {
                         )
                 }
                 
-                VStack() {
+                VStack(spacing: 25) {
                     Text("Password")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -191,13 +191,20 @@ struct SignUpPageUIView: View {
     private func signUp() async {
         do {
             let client = SupabaseManager.shared.client
-
+            errorMessage = nil
+            confirmation = nil
             _ = try await client.auth.signUp(
                 email: email,
                 password: passWord
             )
-            confirmation = "Check your email for account creation"
+            await MainActor.run {
+                confirmation = "Check your email for account creation"
+            }
         } catch {
+            
+            print("Sign up error:", error)      
+            print("Localized:", error.localizedDescription)
+            
             await MainActor.run {
                 errorMessage = error.localizedDescription
             }

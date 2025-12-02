@@ -46,7 +46,7 @@ struct LoginPageUIView: View {
                         value: animateContent
                     )
                 Spacer()
-                VStack() {
+                VStack(spacing: 25) {
                     Text("Email")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -74,7 +74,7 @@ struct LoginPageUIView: View {
                         )
                 }
                 
-                VStack() {
+                VStack(spacing: 25) {
                     Text("Password")
                         .font(.headline)
                         .foregroundColor(.white)
