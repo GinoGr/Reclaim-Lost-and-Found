@@ -157,20 +157,22 @@ struct SignUpPageUIView: View {
                 Spacer()
                 Spacer()
                 
-                Button("Sign Up") {
-                    Task {
-                        await signUp()
-                    }
-                        
+                Button {
+                    Task { await signUp() }
+                } label: {
+                    Text("Log In")
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.white.opacity(0.7), lineWidth: 1)
+                        )
+                        .foregroundColor(.white)
                 }
-                .fontWeight(.semibold)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.white.opacity(0.7), lineWidth: 1)
-                )
-                .foregroundColor(.white)
+                .contentShape(Rectangle())
+                .padding(.horizontal)
+
             }
             .navigationTitle("Sign Up")
             .padding(.horizontal, 32)
@@ -202,7 +204,7 @@ struct SignUpPageUIView: View {
             }
         } catch {
             
-            print("Sign up error:", error)      
+            print("Sign up error:", error)
             print("Localized:", error.localizedDescription)
             
             await MainActor.run {

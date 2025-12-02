@@ -150,17 +150,20 @@ struct LoginPageUIView: View {
                 Spacer()
                 Spacer()
                 
-                Button("Log In") {
-                    Task {
-                        await logIn()
-                    }
+                Button {
+                    Task { await logIn() }
+                } label: {
+                    Text("Log In")
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.white)
+                        .foregroundColor(.black)
+                        .cornerRadius(16)
                 }
-                .fontWeight(.semibold)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.white)
-                .foregroundColor(.black)
-                .cornerRadius(16)
+                .contentShape(Rectangle())
+                .padding(.horizontal)
+
 
             }
             .navigationTitle("Log In")
