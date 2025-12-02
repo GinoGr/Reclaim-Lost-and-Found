@@ -50,6 +50,7 @@ extension View {
                 self
                 if shouldShow {
                     content()
+                        .allowsHitTesting(false)
                 }
             }
     }
