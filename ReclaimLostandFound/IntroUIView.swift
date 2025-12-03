@@ -17,7 +17,7 @@ struct IntroUIView: View {
 
             VStack(spacing: 24) {
                 Spacer()
-                
+
                 Image(systemName: "magnifyingglass.circle.fill")
                     .font(.system(size: 80))
                     .foregroundStyle(.white)
@@ -28,7 +28,7 @@ struct IntroUIView: View {
                         .spring(response: 0.7, dampingFraction: 0.8),
                         value: animateContent
                     )
-                
+
                 Text("Reclaim: Lost And Found")
                     .font(.largeTitle.bold())
                     .foregroundColor(.white)
@@ -39,8 +39,8 @@ struct IntroUIView: View {
                         .easeOut(duration: 0.6).delay(0.1),
                         value: animateContent
                     )
-                
-                
+
+
                 Text("Less searching.\nMore finding.")
                     .font(.subheadline)
                     .foregroundColor(.white.opacity(0.7))
@@ -51,10 +51,10 @@ struct IntroUIView: View {
                         .easeOut(duration: 0.6).delay(0.2),
                         value: animateContent
                     )
-                
+
                 Spacer()
-                
-                
+
+
                 VStack(spacing: 12) {
                     NavigationLink {
                         LoginPageUIView()
@@ -66,8 +66,15 @@ struct IntroUIView: View {
                             .background(Color.white)
                             .foregroundColor(.black)
                             .cornerRadius(16)
+                            .opacity(animateContent ? 1 : 0)
+                            .offset(y: animateContent ? 0 : 40)
+                            .animation(
+                                .spring(response: 0.7, dampingFraction: 0.9)
+                                .delay(0.3),
+                                value: animateContent
+                            )
                     }
-                    
+
                     NavigationLink {
                         SignUpPageUIView()
                     } label: {
@@ -80,6 +87,13 @@ struct IntroUIView: View {
                                     .stroke(Color.white.opacity(0.7), lineWidth: 1)
                             )
                             .foregroundColor(.white)
+                            .opacity(animateContent ? 1 : 0)
+                            .offset(y: animateContent ? 0 : 40)
+                            .animation(
+                                .spring(response: 0.7, dampingFraction: 0.9)
+                                .delay(0.3),
+                                value: animateContent
+                            )
                     }
                 }
                 .padding(.horizontal, 32)

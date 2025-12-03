@@ -74,7 +74,7 @@ struct SignUpPageUIView: View {
                             value: animateContent
                         )
                 }
-                
+
                 VStack(spacing: 25) {
                     Text("Password")
                         .font(.headline)
@@ -148,19 +148,19 @@ struct SignUpPageUIView: View {
                     }
                     if let confirmation = confirmation {
                         Text(confirmation)
-                            .font(.headline)
+                            .font(.body)
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                     }
                 }
-                
+
                 Spacer()
                 Spacer()
-                
+
                 Button {
                     Task { await signUp() }
                 } label: {
-                    Text("Log In")
+                    Text("Create Account")
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -200,13 +200,13 @@ struct SignUpPageUIView: View {
                 password: passWord
             )
             await MainActor.run {
-                confirmation = "Check your email for account creation"
+                confirmation = "Check your email for account creation and Log In"
             }
         } catch {
-            
+
             print("Sign up error:", error)
             print("Localized:", error.localizedDescription)
-            
+
             await MainActor.run {
                 errorMessage = error.localizedDescription
             }

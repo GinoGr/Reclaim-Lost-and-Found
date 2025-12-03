@@ -3,7 +3,7 @@ import SwiftUI
 struct JoinRoomUIView: View {
     @State private var roomNumber = ""
     @State private var roomPass = ""
-    
+
     var body: some View {
         ZStack {
             LinearGradient(
@@ -26,7 +26,7 @@ struct JoinRoomUIView: View {
 
                 VStack(spacing: 16) {
                     Spacer()
-                    
+
                     VStack() {
                         Text("Room Number")
                             .font(.headline)
@@ -40,8 +40,8 @@ struct JoinRoomUIView: View {
                             }
                             .roomTextFieldStyle()
                     }
-                    
-                    
+
+
                     VStack() {
                         Text("Room Password")
                             .font(.headline)
@@ -56,10 +56,10 @@ struct JoinRoomUIView: View {
                             }
                             .roomTextFieldStyle()
                     }
-                    
+
                     Spacer()
                     Spacer()
-                    
+
                     Button(action: {
                         print("Join Room tapped")
                     }) {

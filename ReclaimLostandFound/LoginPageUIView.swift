@@ -10,7 +10,7 @@ import Supabase
 
 struct LoginPageUIView: View {
     @EnvironmentObject var appState: AppState
-    
+
     @State private var animateContent = false
     @State private var animateBackground = false
     @State private var email = ""
@@ -73,7 +73,7 @@ struct LoginPageUIView: View {
                             value: animateContent
                         )
                 }
-                
+
                 VStack(spacing: 25) {
                     Text("Password")
                         .font(.headline)

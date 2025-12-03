@@ -3,7 +3,7 @@ import Supabase
 
 struct HomePageUIView: View {
     @EnvironmentObject var appState: AppState
-    
+
     var body: some View {
         ZStack {
             LinearGradient(
@@ -19,7 +19,7 @@ struct HomePageUIView: View {
                         Text("Welcome, USER!")
                             .font(.title.bold())
                             .foregroundColor(.white)
-                        
+
                         Text("What would you like to do?")
                             .font(.subheadline)
                             .foregroundColor(.white.opacity(0.7))
@@ -40,7 +40,7 @@ struct HomePageUIView: View {
                     Spacer()
                 }
                 VStack(spacing: 16) {
-                    
+
                     NavigationLink {
                         JoinRoomUIView()
                     } label: {
@@ -56,7 +56,7 @@ struct HomePageUIView: View {
                         .foregroundColor(.black)
                         .cornerRadius(16)
                     }
-                    
+
                     NavigationLink {
                         CreateRoomUIView()
                     } label: {
