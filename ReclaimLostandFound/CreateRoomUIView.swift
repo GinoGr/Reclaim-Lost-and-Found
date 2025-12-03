@@ -1,6 +1,61 @@
 import SwiftUI
 import CoreLocation
 internal import Combine
+import Supabase
+
+import Supabase
+
+struct RoomInsert: Encodable {
+    let room_code: String
+    let name: String
+    let password: String
+    let created_by: UUID
+    let expires_at: Date?
+    let location_lat: Double?
+    let location_lng: Double?
+}
+
+extension CreateRoomUIView {
+    private func generateRoomCode() -> String {
+        String(Int.random(in: 100_000...999_999))
+    }
+
+    private func createRoom() async {
+        do {
+            let client = SupabaseManager.shared.client
+
+            guard let user = client.auth.currentUser else {
+                print("Not logged in")
+                return
+            }
+
+            let code = generateRoomCode()
+            let coord = locationManager.lastCoordinate
+
+            let payload = RoomInsert(
+                room_code: code,
+                name: roomName,
+                password: roomPass,
+                created_by: user.id,
+                expires_at: useExpiration ? expirationDate : nil,
+                location_lat: useLocation ? coord?.latitude : nil,
+                location_lng: useLocation ? coord?.longitude : nil
+            )
+
+            try await client
+                .from("rooms")
+                .insert(payload)
+                .execute()
+
+            print("Room created with code:", code)
+
+        } catch {
+            print("Create room error:", error.localizedDescription)
+        }
+    }
+
+}
+
 
 struct CreateRoomUIView: View {
     @State private var roomName = ""
@@ -20,9 +75,9 @@ struct CreateRoomUIView: View {
                 endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
-
+            
             VStack(spacing: 32) {
-
+                
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Create Room")
                         .font(.title.bold())
@@ -31,7 +86,7 @@ struct CreateRoomUIView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 24)
                 .padding(.top, 40)
-
+                
                 VStack(spacing: 16) {
                     Spacer()
                     
@@ -103,9 +158,9 @@ struct CreateRoomUIView: View {
                     Spacer()
                     Spacer()
                     
-                    Button(action: {
-                        print("Create Room tapped")
-                    }) {
+                    Button {
+                        Task { await createRoom() }
+                    } label: {
                         HStack {
                             Text("Create Room")
                                 .fontWeight(.semibold)
@@ -120,12 +175,15 @@ struct CreateRoomUIView: View {
                     }
                 }
                 .padding(.horizontal, 24)
-
+                
                 Spacer()
             }
         }
     }
+    
 }
+
+
 
 #Preview {
     CreateRoomUIView()
