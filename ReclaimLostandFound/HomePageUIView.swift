@@ -124,7 +124,7 @@ struct MyRoomsView: View {
                 DisclosureGroup(isExpanded: $isCreatedExpanded) {
                     if createdRooms.isEmpty {
                         Text("You haven’t created any rooms yet.")
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.white)
                             .padding(.vertical, 8)
                     } else {
                         VStack(spacing: 8) {
@@ -146,7 +146,7 @@ struct MyRoomsView: View {
                 DisclosureGroup(isExpanded: $isJoinedExpanded) {
                     if joinedRooms.isEmpty {
                         Text("You haven’t joined any rooms yet.")
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.white)
                             .padding(.vertical, 8)
                     } else {
                         VStack(spacing: 8) {
@@ -199,6 +199,7 @@ struct MyRoomsView: View {
                 .from("room_members")
                 .select("rooms(*), role")
                 .eq("user_id", value: user.id)
+                .eq("role", value: "Member")
                 .execute()
                 .value
 
