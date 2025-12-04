@@ -223,15 +223,15 @@ struct RoomCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(room.name)
-                .font(.headline)
+                .font(.title3)
             Text("Code: \(room.room_code)")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(.white)
 
             if let expires = room.expires_at {
                 Text("Expires: \(expires.formatted(date: .abbreviated, time: .shortened))")
                     .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.white)
             }
         }
         .padding()
