@@ -200,7 +200,7 @@ struct SignUpPageUIView: View {
                 password: passWord
             )
             await MainActor.run {
-                confirmation = "Check your email for account creation and Log In"
+                confirmation = "Check your email for account creation..."
             }
         } catch {
 
