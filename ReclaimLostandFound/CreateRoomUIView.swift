@@ -3,6 +3,8 @@ import CoreLocation
 internal import Combine
 import Supabase
 
+private var errorMessage: String?
+
 extension CreateRoomUIView {
     private func generateRoomCode() -> String {
         String(Int.random(in: 100_000...999_999))
@@ -68,7 +70,7 @@ struct CreateRoomUIView: View {
     @StateObject private var locationManager = LocationManager()
     
     @State private var confirmationMessage: String?
-    
+        
     var body: some View {
         ZStack {
             LinearGradient(
@@ -164,11 +166,19 @@ struct CreateRoomUIView: View {
                             .multilineTextAlignment(.center)
                     }
                     
+                    if let errorMessage = errorMessage {
+                        Text(errorMessage)
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                    }
+                    
                     Spacer()
                     Spacer()
                         
                     Button {
                         Task {
+                            errorMessage = nil
                             confirmationMessage = nil
                             await createRoom()
                         }
@@ -228,5 +238,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Location error: \(error.localizedDescription)")
+        errorMessage = "Failed to get location"
+        
     }
 }
