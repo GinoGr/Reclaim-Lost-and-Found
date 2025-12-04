@@ -3,18 +3,6 @@ import CoreLocation
 internal import Combine
 import Supabase
 
-import Supabase
-
-struct RoomInsert: Encodable {
-    let room_code: String
-    let name: String
-    let password: String
-    let created_by: UUID
-    let expires_at: Date?
-    let location_lat: Double?
-    let location_lng: Double?
-}
-
 extension CreateRoomUIView {
     private func generateRoomCode() -> String {
         String(Int.random(in: 100_000...999_999))
@@ -32,6 +20,7 @@ extension CreateRoomUIView {
             let code = generateRoomCode()
             let coord = locationManager.lastCoordinate
 
+            // 1) build payload
             let payload = RoomInsert(
                 room_code: code,
                 name: roomName,
@@ -42,18 +31,29 @@ extension CreateRoomUIView {
                 location_lng: useLocation ? coord?.longitude : nil
             )
 
-            try await client
+            let createdRoom: RoomRow = try await client
                 .from("rooms")
                 .insert(payload)
+                .select()
+                .single()
+                .execute()
+                .value
+
+            let membership = RoomMemberInsert(room_id: createdRoom.id, user_id: user.id, role: "Creator")
+
+            try await client
+                .from("room_members")
+                .insert(membership)
                 .execute()
 
-            print("Room created with code:", code)
+            print("Room created with code:", createdRoom.room_code)
+            confirmationMessage = "Room Created with code \(createdRoom.room_code)"
+
 
         } catch {
-            print("Create room error:", error.localizedDescription)
+            print("Create room error:", error)
         }
     }
-
 }
 
 
@@ -66,6 +66,8 @@ struct CreateRoomUIView: View {
     
     @State private var useLocation = false
     @StateObject private var locationManager = LocationManager()
+    
+    @State private var confirmationMessage: String?
     
     var body: some View {
         ZStack {
@@ -155,11 +157,21 @@ struct CreateRoomUIView: View {
                         }
                     }
                     
-                    Spacer()
-                    Spacer()
+                    if let confirmationMessage = confirmationMessage {
+                        Text(confirmationMessage)
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                    }
                     
+                    Spacer()
+                    Spacer()
+                        
                     Button {
-                        Task { await createRoom() }
+                        Task {
+                            confirmationMessage = nil
+                            await createRoom()
+                        }
                     } label: {
                         HStack {
                             Text("Create Room")
@@ -173,15 +185,16 @@ struct CreateRoomUIView: View {
                         )
                         .foregroundColor(.white)
                     }
+                    
                 }
-                .padding(.horizontal, 24)
-                
-                Spacer()
             }
+            .padding(.horizontal, 24)
+
+            Spacer()
         }
     }
-    
 }
+
 
 
 
@@ -203,12 +216,12 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     }
 
     func requestLocation() {
-        // Make sure you added NSLocationWhenInUseUsageDescription to Info.plist
+
         manager.requestWhenInUseAuthorization()
         manager.requestLocation()
     }
 
-    // CLLocationManagerDelegate
+
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         lastCoordinate = locations.last?.coordinate
     }
