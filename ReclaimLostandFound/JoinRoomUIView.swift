@@ -1,8 +1,69 @@
 import SwiftUI
+import Supabase
+
+extension JoinRoomUIView {
+    private func joinRoom() async {
+        do {
+            let client = SupabaseManager.shared.client
+
+            guard let user = client.auth.currentUser else {
+                await MainActor.run {
+                    errorMessage = "You must be logged in to join a room."
+                }
+                return
+            }
+
+            // 1) find room by code + password
+            let response = try await client
+                .from("rooms")
+                .select()
+                .eq("room_code", value: roomNumber)
+                .eq("password", value: roomPass)
+                .single()
+                .execute()
+
+            let room: RoomRow = try await client
+                .from("rooms")
+                .select()
+                .eq("room_code", value: roomNumber)
+                .eq("password", value: roomPass)
+                .single()
+                .execute()
+                .value
+            // 2) insert membership
+            let membership = RoomMemberInsert(room_id: room.id, user_id: user.id, role: "Member")
+
+            do {
+                try await client
+                    .from("room_members")
+                    .insert(membership)
+                    .execute()
+            } catch {
+                // if already a member (duplicate key), you can ignore
+                print("Insert membership error:", error)
+            }
+
+            await MainActor.run {
+                errorMessage = nil
+                print("Joined room:", room.name)
+                confirmation = "Joined room: \(room.name)"
+            }
+
+        } catch {
+            print("Join room error:", error)
+            await MainActor.run {
+                errorMessage = "Invalid room code or password."
+            }
+        }
+    }
+}
+
 
 struct JoinRoomUIView: View {
     @State private var roomNumber = ""
     @State private var roomPass = ""
+    @State private var errorMessage: String?
+    @State private var confirmation: String?
 
     var body: some View {
         ZStack {
@@ -56,13 +117,30 @@ struct JoinRoomUIView: View {
                             }
                             .roomTextFieldStyle()
                     }
+                    
+                    if let errorMessage = errorMessage {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .font(.footnote)
+                    }
+                    
+                    if let confirmation = confirmation {
+                        Text(confirmation)
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                    }
 
                     Spacer()
                     Spacer()
 
-                    Button(action: {
-                        print("Join Room tapped")
-                    }) {
+                    Button {
+                        Task {
+                            errorMessage = nil
+                            confirmation = nil
+                            await joinRoom()
+                        }
+                    } label: {
                         HStack {
                             Text("Join Room")
                                 .fontWeight(.semibold)
