@@ -186,6 +186,7 @@ struct LoginPageUIView: View {
         do {
             let client = SupabaseManager.shared.client
 
+            errorMessage = nil
             _ = try await client.auth.signIn(
                 email: email,
                 password: passWord
