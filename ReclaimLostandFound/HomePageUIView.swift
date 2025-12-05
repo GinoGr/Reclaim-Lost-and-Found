@@ -105,7 +105,7 @@ struct HomePageUIView: View {
 
 struct MyRoomsView: View {
     @State private var createdRooms: [RoomRow] = []
-    @State private var joinedRooms: [RoomRow] = []
+    @State private var joinedMemberships: [JoinedRoomRow] = []
     @State private var isCreatedExpanded = true
     @State private var isJoinedExpanded = false
     @State private var errorMessage: String?
@@ -129,7 +129,11 @@ struct MyRoomsView: View {
                     } else {
                         VStack(spacing: 8) {
                             ForEach(createdRooms) { room in
-                                RoomCard(room: room)
+                                NavigationLink {
+                                    RoomDetailView(room: room, role: "Creator")
+                                } label: {
+                                    RoomCard(room: room, role: "Creator")
+                                }
                             }
                         }
                         .padding(.top, 8)
@@ -142,16 +146,19 @@ struct MyRoomsView: View {
                 .background(Color.white.opacity(0.06))
                 .cornerRadius(16)
 
-                // JOINED ROOMS
                 DisclosureGroup(isExpanded: $isJoinedExpanded) {
-                    if joinedRooms.isEmpty {
+                    if joinedMemberships.isEmpty {
                         Text("You haven’t joined any rooms yet.")
                             .foregroundColor(.white)
                             .padding(.vertical, 8)
                     } else {
                         VStack(spacing: 8) {
-                            ForEach(joinedRooms) { room in
-                                RoomCard(room: room)
+                            ForEach(joinedMemberships) { joined in      // <— note: joinedMemberships, no $
+                                NavigationLink {
+                                    RoomDetailView(room: joined.rooms, role: joined.role)
+                                } label: {
+                                    RoomCard(room: joined.rooms, role: joined.role)
+                                }
                             }
                         }
                         .padding(.top, 8)
@@ -178,38 +185,31 @@ struct MyRoomsView: View {
     private func loadRooms() async {
         do {
             let client = SupabaseManager.shared.client
+            guard let user = client.auth.currentUser else { return }
 
-            guard let user = client.auth.currentUser else {
-                await MainActor.run {
-                    errorMessage = "You must be logged in to view rooms."
-                }
-                return
-            }
-
-            // 1) Rooms I created
-            let myCreatedRooms: [RoomRow] = try await client
+            //Rooms I created
+            let myCreated: [RoomRow] = try await client
                 .from("rooms")
                 .select()
                 .eq("created_by", value: user.id)
                 .execute()
                 .value
 
-            // 2) Rooms I joined (via room_members → rooms)
-            let joinedRows: [JoinedRoomRow] = try await client
+            //Rooms I joined (via room_members → rooms)
+            let memberships: [JoinedRoomRow] = try await client
                 .from("room_members")
                 .select("rooms(*), role")
                 .eq("user_id", value: user.id)
-                .eq("role", value: "Member")
                 .execute()
                 .value
 
             await MainActor.run {
-                createdRooms = myCreatedRooms
-                joinedRooms = joinedRows.map { $0.rooms }
+                createdRooms = myCreated
+                joinedMemberships = memberships
                 errorMessage = nil
             }
         } catch {
-            print("Load rooms error:", error)
+            print("loadRooms error:", error)
             await MainActor.run {
                 errorMessage = "Failed to load rooms."
             }
@@ -219,24 +219,27 @@ struct MyRoomsView: View {
 
 struct RoomCard: View {
     let room: RoomRow
+    let role: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(room.name)
-                .font(.title3)
-            Text("Code: \(room.room_code)")
-                .font(.subheadline)
+                .font(.headline)
                 .foregroundColor(.white)
 
-            if let expires = room.expires_at {
-                Text("Expires: \(expires.formatted(date: .abbreviated, time: .shortened))")
-                    .font(.footnote)
-                    .foregroundColor(.white)
+            Text("Code: \(room.room_code)")
+                .font(.subheadline)
+                .foregroundColor(.white.opacity(0.8))
+
+            if let role = role {
+                Text(role)
+                    .font(.caption)
+                    .foregroundColor(.white.opacity(0.7))
             }
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.black.opacity(0.2))
+        .background(Color.black.opacity(0.25))
         .cornerRadius(12)
     }
 }
