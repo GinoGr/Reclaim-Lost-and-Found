@@ -42,7 +42,6 @@ extension CreateRoomUIView {
                 .value
 
             let membership = RoomMemberInsert(room_id: createdRoom.id, user_id: user.id, role: "Creator")
-
             try await client
                 .from("room_members")
                 .insert(membership)
