@@ -200,6 +200,7 @@ struct MyRoomsView: View {
                 .from("room_members")
                 .select("rooms(*), role")
                 .eq("user_id", value: user.id)
+                .eq("role", value: "Member")
                 .execute()
                 .value
 

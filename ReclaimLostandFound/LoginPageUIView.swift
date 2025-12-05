@@ -6,11 +6,11 @@
 //
 
 import SwiftUI
-import Supabase
+import Supabase //Database Library
 
 struct LoginPageUIView: View {
-    @EnvironmentObject var appState: AppState
-
+    @EnvironmentObject var appState: AppState //Logged in or not. Will be used to change root view
+//EnviromentObject allows a global update this var and re renders all uiviews using this var.
     @State private var animateContent = false
     @State private var animateBackground = false
     @State private var email = ""
@@ -29,9 +29,9 @@ struct LoginPageUIView: View {
             .hueRotation(.degrees(animateBackground ? 15 : -15))
             .animation(
                 .easeInOut(duration: 8)
-                    .repeatForever(autoreverses: true),
+                .repeatForever(autoreverses: true),
                 value: animateBackground
-            )
+            ) //Change hue does not stop
 
             VStack(spacing: 50) {
                 Spacer()
@@ -59,13 +59,13 @@ struct LoginPageUIView: View {
                         )
                     TextField("", text: $email)
                         .textInputAutocapitalization(.never)
-                        .keyboardType(.emailAddress)
+                        .keyboardType(.emailAddress) //Changes the keyboard that pops up when typing in email
                         .placeholder(when: email.isEmpty) {
                             Text("Enter Email")
                                 .foregroundColor(.white.opacity(0.5))
                                 .padding(.horizontal, 12)
-                        }
-                        .roomTextFieldStyle()
+                        } //Changes The text shown on textfield and allows for customization to text
+                        .roomTextFieldStyle() //custom textfield style applied to all fields on app
                         .opacity(animateContent ? 1 : 0)
                         .offset(y: animateContent ? 0 : 10)
                         .animation(
@@ -85,7 +85,7 @@ struct LoginPageUIView: View {
                             .easeOut(duration: 0.6).delay(0.1),
                             value: animateContent
                         )
-                    ZStack {
+                    ZStack { //To overlay eye button over text field
                         if(!isPasswordVisible) {
                             SecureField("", text: $passWord)
                                 .placeholder(when: passWord.isEmpty) {
@@ -151,7 +151,7 @@ struct LoginPageUIView: View {
                 Spacer()
                 
                 Button {
-                    Task { await logIn() }
+                    Task { await logIn() } //Allows for asynchronous action
                 } label: {
                     Text("Log In")
                         .fontWeight(.semibold)
