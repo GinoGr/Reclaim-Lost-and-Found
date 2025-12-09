@@ -11,6 +11,7 @@ struct RootView: View {
     @EnvironmentObject var appState: AppState
 
     var body: some View {
+        //Swift only allows one view to be displayed. Group is a view that can contain multiple views and switch between them.
         Group {
             if appState.isLoggedIn {
                 NavigationStack {
@@ -25,8 +26,8 @@ struct RootView: View {
     }
 }
 
-extension View {
-    func roomTextFieldStyle() -> some View {
+extension View { //Going to be adding my own view modifier function
+    func roomTextFieldStyle() -> some View { //The function outputs a view as all view modifiers do
         self
             .padding(.horizontal, 12)
             .padding(.vertical, 10)
@@ -41,10 +42,12 @@ extension View {
             )
             .foregroundColor(.white)
     }
+    
+    //Allows a view modification especially made for textfields. Allows for custom text and formating to be placed on a textfield (Swiftui does not natively allow this) <Content: View> allows for use as a
     func placeholder<Content: View>(
-            when shouldShow: Bool,
+            when shouldShow: Bool, //Only applies modifier when this bool is true
             alignment: Alignment = .leading,
-            @ViewBuilder content: () -> Content
+            @ViewBuilder content: () -> Content //Allows for closure that returns a view. Content is the view being built. Allows for views to be added to closure.
         ) -> some View {
             ZStack(alignment: alignment) {
                 self
@@ -54,7 +57,6 @@ extension View {
                 }
             }
     }
-    
 }
 
 #Preview {

@@ -21,9 +21,9 @@ struct IntroUIView: View {
                 Image(systemName: "magnifyingglass.circle.fill") //Logo
                     .font(.system(size: 80))
                     .foregroundStyle(.white)
+                    .shadow(radius: 12)
                     .scaleEffect(animateContent ? 1.0 : 0.8) // Scales the image
                     .opacity(animateContent ? 1 : 0) // Make visible only when page appears
-                    .shadow(radius: 12)
                     .animation(
                         .spring(response: 0.7, dampingFraction: 0.8),
                         value: animateContent
@@ -67,13 +67,6 @@ struct IntroUIView: View {
                             .background(Color.white)
                             .foregroundColor(.black)
                             .cornerRadius(16)
-                            .opacity(animateContent ? 1 : 0)
-                            .offset(y: animateContent ? 0 : 40)
-                            .animation(
-                                .spring(response: 0.7, dampingFraction: 0.9)
-                                .delay(0.3),
-                                value: animateContent
-                            )
                     }
 
                     NavigationLink {
@@ -88,13 +81,6 @@ struct IntroUIView: View {
                                     .stroke(Color.white.opacity(0.7), lineWidth: 1)
                             )
                             .foregroundColor(.white)
-                            .opacity(animateContent ? 1 : 0)
-                            .offset(y: animateContent ? 0 : 40)
-                            .animation(
-                                .spring(response: 0.7, dampingFraction: 0.9)
-                                .delay(0.3),
-                                value: animateContent
-                            )
                     }
                 }
                 .padding(.horizontal, 32)
@@ -108,7 +94,6 @@ struct IntroUIView: View {
                 )
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         .onAppear {
             animateContent = true
             animateBackground = true

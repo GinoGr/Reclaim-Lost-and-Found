@@ -4,9 +4,9 @@ import Supabase
 
 struct AddItemSheet: View {
     let room: RoomRow
-    var onItemAdded: (ItemRow) -> Void
+    var onItemAdded: (ItemRow) -> Void //Syntax to return to parent caller
 
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) var dismiss //Allows sheet to dismiss itself
 
     @State private var title: String = ""
     @State private var description: String = ""
@@ -27,8 +27,8 @@ struct AddItemSheet: View {
                 Section("Photo") {
 
                     // PREVIEW
-                    if let imageData,
-                       let uiImage = UIImage(data: imageData) {
+                    if let imageData, //not swiftui friendly
+                       let uiImage = UIImage(data: imageData) { //Display image in swiftui form
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()
@@ -36,7 +36,7 @@ struct AddItemSheet: View {
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
 
-                    // 📷 From photo library (native PhotosPicker)
+                    // From photo library (native PhotosPicker)
                     PhotosPicker("Choose Photo",
                                  selection: $selectedPickerItem,
                                  matching: .images)
@@ -44,7 +44,7 @@ struct AddItemSheet: View {
                             guard let newItem else { return }
                             Task {
                                 do {
-                                    if let data = try await newItem.loadTransferable(type: Data.self) {
+                                    if let data = try await newItem.loadTransferable(type: Data.self) { //native photopicker function to retrieve selected photo data
                                         await MainActor.run { imageData = data }
                                     }
                                 } catch {
@@ -56,7 +56,7 @@ struct AddItemSheet: View {
                             }
                         }
 
-                    // 📸 From camera
+                    // From camera
                     Button {
                         showingCamera = true
                     } label: {
@@ -81,16 +81,16 @@ struct AddItemSheet: View {
                         Task { await saveItem() }
                     } label: {
                         if isSaving {
-                            ProgressView()
+                            ProgressView() //Displays progress of awaiting tasks
                         } else {
                             Text("Save")
                         }
                     }
-                    .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty || isSaving)
+                    .disabled(title.isEmpty || isSaving)
                 }
             }
             .sheet(isPresented: $showingCamera) {
-                CameraPicker(imageData: $imageData)
+                CameraPicker(imageData: $imageData) //Calls camera wrapper class
             }
         }
     }
@@ -109,7 +109,7 @@ struct AddItemSheet: View {
                               userInfo: [NSLocalizedDescriptionKey: "Not logged in"])
             }
 
-            // 1) Upload image if present
+            // Upload image if present
             var imageURLString: String? = nil
 
             if let data = imageData {
@@ -132,7 +132,7 @@ struct AddItemSheet: View {
             let payload = ItemInsert(
                 room_id: room.id,
                 created_by: user.id,
-                title: title.trimmingCharacters(in: .whitespaces),
+                title: title,
                 description: description.isEmpty ? nil : description,
                 image_url: imageURLString
             )
@@ -150,7 +150,6 @@ struct AddItemSheet: View {
                 dismiss()
             }
         } catch {
-            print("saveItem error (full):", error)       // <— add this
             await MainActor.run {
                 errorMessage = error.localizedDescription
             }

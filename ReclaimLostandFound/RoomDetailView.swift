@@ -3,7 +3,7 @@ import Supabase
 
 struct RoomDetailView: View {
     let room: RoomRow          // from your models
-    let role: String?          // "Creator" / "Member" if you have it
+    let role: String?
 
     // later you’ll replace this with items loaded from Supabase
     @State private var items: [ItemRow] = []
@@ -43,6 +43,7 @@ struct RoomDetailView: View {
                                     .cornerRadius(999)
                                     .foregroundColor(.white)
                             }
+                            
                         }
                         HStack {
                             Text("Room code: \(room.room_code)")
@@ -68,9 +69,8 @@ struct RoomDetailView: View {
                                 .foregroundColor(.white.opacity(0.5))
                         }
 
-                        if let lat = room.location_lat,
-                           let lng = room.location_lng {
-                            Text("Location attached • (\(lat, specifier: "%.4f"), \(lng, specifier: "%.4f"))")
+                        if let address = room.address {
+                            Text("Location attached • \(address)")
                                 .font(.footnote)
                                 .foregroundColor(.white.opacity(0.7))
                         } else {
@@ -186,7 +186,7 @@ struct ItemRowView: View {
                         Color.gray.opacity(0.3)
                     case .empty:
                         ProgressView()
-                    @unknown default:
+                    default:
                         Color.gray.opacity(0.3)
                     }
                 }
@@ -229,8 +229,7 @@ struct ItemRowView: View {
                 password: "password",
                 created_by: UUID(),
                 expires_at: nil,
-                location_lat: 5.0,
-                location_lng: 6.0
+                address: "123 Apple Street, Cupertino, CA"
             ),
             role: "Creator"
         )

@@ -10,7 +10,7 @@ import CoreData
 
 @main
 struct ReclaimLostandFoundApp: App {
-    @StateObject private var appState = AppState()
+    @StateObject private var appState = AppState() //Object is created and owned here
 
     var body: some Scene {
         WindowGroup {

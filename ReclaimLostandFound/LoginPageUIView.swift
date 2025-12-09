@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Supabase //Database Library
+import Supabase //Database Library. Used for authentication
 
 struct LoginPageUIView: View {
     @EnvironmentObject var appState: AppState //Logged in or not. Will be used to change root view
@@ -29,10 +29,11 @@ struct LoginPageUIView: View {
             .hueRotation(.degrees(animateBackground ? 15 : -15))
             .animation(
                 .easeInOut(duration: 8)
-                .repeatForever(autoreverses: true),
+                .repeatForever(),
                 value: animateBackground
             ) //Change hue does not stop
-
+            
+            // MARK: - UIVIEW TITLE
             VStack(spacing: 50) {
                 Spacer()
                 Text("Welcome Back!")
@@ -46,6 +47,8 @@ struct LoginPageUIView: View {
                         value: animateContent
                     )
                 Spacer()
+                
+                //MARK: - Email Section
                 VStack(spacing: 25) {
                     Text("Email")
                         .font(.headline)
@@ -62,18 +65,23 @@ struct LoginPageUIView: View {
                         .keyboardType(.emailAddress) //Changes the keyboard that pops up when typing in email
                         .placeholder(when: email.isEmpty) {
                             Text("Enter Email")
-                                .foregroundColor(.white.opacity(0.5))
+                                .foregroundColor(
+                                    .white
+                                        .opacity(0.5)
+                                )
                                 .padding(.horizontal, 12)
-                        } //Changes The text shown on textfield and allows for customization to text
+                        } //Changes The text shown on textfield and allows for customization to text. Custom function
                         .roomTextFieldStyle() //custom textfield style applied to all fields on app
                         .opacity(animateContent ? 1 : 0)
                         .offset(y: animateContent ? 0 : 10)
                         .animation(
-                            .easeOut(duration: 0.6).delay(0.1),
+                            .easeOut(duration: 0.6)
+                            .delay(0.1),
                             value: animateContent
                         )
                 }
-
+                
+                //MARK: - Password Section
                 VStack(spacing: 25) {
                     Text("Password")
                         .font(.headline)
@@ -82,7 +90,8 @@ struct LoginPageUIView: View {
                         .opacity(animateContent ? 1 : 0)
                         .offset(y: animateContent ? 0 : 10)
                         .animation(
-                            .easeOut(duration: 0.6).delay(0.1),
+                            .easeOut(duration: 0.6)
+                            .delay(0.1),
                             value: animateContent
                         )
                     ZStack { //To overlay eye button over text field
@@ -97,7 +106,8 @@ struct LoginPageUIView: View {
                                 .opacity(animateContent ? 1 : 0)
                                 .offset(y: animateContent ? 0 : 10)
                                 .animation(
-                                    .easeOut(duration: 0.6).delay(0.1),
+                                    .easeOut(duration: 0.6)
+                                    .delay(0.1),
                                     value: animateContent
                                 )
                         }
@@ -105,14 +115,18 @@ struct LoginPageUIView: View {
                             TextField("", text: $passWord)
                                 .placeholder(when: passWord.isEmpty) {
                                     Text("Enter Password")
-                                        .foregroundColor(.white.opacity(0.5))
+                                        .foregroundColor(
+                                            .white
+                                                .opacity(0.5)
+                                        )
                                         .padding(.horizontal, 12)
                                 }
                                 .roomTextFieldStyle()
                                 .opacity(animateContent ? 1 : 0)
                                 .offset(y: animateContent ? 0 : 10)
                                 .animation(
-                                    .easeOut(duration: 0.6).delay(0.1),
+                                    .easeOut(duration: 0.6)
+                                    .delay(0.1),
                                     value: animateContent
                                 )
                         }
@@ -139,20 +153,16 @@ struct LoginPageUIView: View {
                             .font(.footnote)
                             .foregroundColor(.red)
                             .multilineTextAlignment(.center)
-                            .opacity(animateContent ? 1 : 0)
-                            .offset(y: animateContent ? 0 : 10)
-                            .animation(
-                                .easeOut(duration: 0.6).delay(0.1),
-                                value: animateContent
-                            )
                     }
                 }
                 Spacer()
                 Spacer()
                 
+                //asynchronous needed to allow user interface to continue rendering while atempting server contact. Using "Task" encapsulates the asynchronous action to just the items inside it.
+                // MARK: - Login Button
                 Button {
-                    Task { await logIn() } //Allows for asynchronous action
-                } label: {
+                    Task { await logIn() }
+                } label: { //Label is the visible part of the button in this instance
                     Text("Log In")
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
@@ -166,7 +176,6 @@ struct LoginPageUIView: View {
 
 
             }
-            .navigationTitle("Log In")
             .padding(.horizontal, 32)
             .padding(.bottom, 40)
             .opacity(animateContent ? 1 : 0)
@@ -182,22 +191,30 @@ struct LoginPageUIView: View {
             animateBackground = true
         }
     }
-    private func logIn() async {
+    
+    //MARK: - Login Logic
+    // Function used for login logic with supabase
+    // Uses async to call asynchronous function. Recomeneded when using network comms
+    private func logIn() async { //Private to keep func local to this view
         do {
+            //Get the globally shared Supabase client instance and store it in a local constant called client so I can use it for login calls
             let client = SupabaseManager.shared.client
 
-            errorMessage = nil
+            errorMessage = nil //Reset error message on each button click
+            
+            //Core login logic. Preform Supabase api call for authentication. Throws error sent from supabase on login problem. Network comm so suspend action while waiting for repsonse.
             _ = try await client.auth.signIn(
                 email: email,
                 password: passWord
             )
-
+            
+            //Main actor controls main thread. Must be ran as main thread to actively update UI. If main actor not specified, swift may choose to run as a background task/thread causing a lower priority and possible slow response
             await MainActor.run {
                 appState.isLoggedIn = true
             }
         } catch {
             await MainActor.run {
-                errorMessage = error.localizedDescription
+                errorMessage = error.localizedDescription //user friendly description
             }
         }
     }

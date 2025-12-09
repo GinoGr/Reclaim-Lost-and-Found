@@ -9,7 +9,6 @@ import SwiftUI
 import Supabase
 
 struct SignUpPageUIView: View {
-    @EnvironmentObject var appState: AppState
     @State private var animateContent = false
     @State private var animateBackground = false
     @State private var email = ""
@@ -30,34 +29,25 @@ struct SignUpPageUIView: View {
             .hueRotation(.degrees(animateBackground ? 15 : -15))
             .animation(
                 .easeInOut(duration: 8)
-                    .repeatForever(autoreverses: true),
+                    .repeatForever(),
                 value: animateBackground
             )
 
             VStack(spacing: 50) {
                 Spacer()
+                
+                //MARK: - TITLE
                 Text("Create Account")
                     .font(.largeTitle.bold())
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
-                    .opacity(animateContent ? 1 : 0)
-                    .offset(y: animateContent ? 0 : 10)
-                    .animation(
-                        .easeOut(duration: 0.6).delay(0.1),
-                        value: animateContent
-                    )
                 Spacer()
                 VStack(spacing: 25) {
+                    //MARK: - Email Section
                     Text("Email")
                         .font(.headline)
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
-                        .opacity(animateContent ? 1 : 0)
-                        .offset(y: animateContent ? 0 : 10)
-                        .animation(
-                            .easeOut(duration: 0.6).delay(0.1),
-                            value: animateContent
-                        )
                     TextField("", text: $email)
                         .placeholder(when: email.isEmpty) {
                             Text("Enter Email")
@@ -67,25 +57,15 @@ struct SignUpPageUIView: View {
                         .textInputAutocapitalization(.never)
                         .keyboardType(.emailAddress)
                         .roomTextFieldStyle()
-                        .opacity(animateContent ? 1 : 0)
-                        .offset(y: animateContent ? 0 : 10)
-                        .animation(
-                            .easeOut(duration: 0.6).delay(0.1),
-                            value: animateContent
-                        )
                 }
 
                 VStack(spacing: 25) {
+                    //MARK: - Password Section
                     Text("Password")
                         .font(.headline)
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
-                        .opacity(animateContent ? 1 : 0)
-                        .offset(y: animateContent ? 0 : 10)
-                        .animation(
-                            .easeOut(duration: 0.6).delay(0.1),
-                            value: animateContent
-                        )
+                        
                     ZStack {
                         if(!isPasswordVisible) {
                             SecureField("", text: $passWord)
@@ -96,11 +76,6 @@ struct SignUpPageUIView: View {
                                 }
                                 .roomTextFieldStyle()
                                 .opacity(animateContent ? 1 : 0)
-                                .offset(y: animateContent ? 0 : 10)
-                                .animation(
-                                    .easeOut(duration: 0.6).delay(0.1),
-                                    value: animateContent
-                                )
                         }
                         else {
                             TextField("", text: $passWord)
@@ -110,12 +85,6 @@ struct SignUpPageUIView: View {
                                         .padding(.horizontal, 12)
                                 }
                                 .roomTextFieldStyle()
-                                .opacity(animateContent ? 1 : 0)
-                                .offset(y: animateContent ? 0 : 10)
-                                .animation(
-                                    .easeOut(duration: 0.6).delay(0.1),
-                                    value: animateContent
-                                )
                         }
                         HStack {
                             Spacer()
@@ -139,12 +108,6 @@ struct SignUpPageUIView: View {
                         Text(errorMessage)
                             .foregroundColor(.red)
                             .font(.footnote)
-                            .opacity(animateContent ? 1 : 0)
-                            .offset(y: animateContent ? 0 : 10)
-                            .animation(
-                                .easeOut(duration: 0.6).delay(0.1),
-                                value: animateContent
-                            )
                     }
                     if let confirmation = confirmation {
                         Text(confirmation)
@@ -156,7 +119,8 @@ struct SignUpPageUIView: View {
 
                 Spacer()
                 Spacer()
-
+                
+                //MARK: - Signup Button
                 Button {
                     Task { await signUp() }
                 } label: {
@@ -164,21 +128,19 @@ struct SignUpPageUIView: View {
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .overlay(
+                        .overlay( //Another view over the label. Will be used to make button style shape
                             RoundedRectangle(cornerRadius: 16)
                                 .stroke(Color.white.opacity(0.7), lineWidth: 1)
                         )
                         .foregroundColor(.white)
                 }
-                .contentShape(Rectangle())
                 .padding(.horizontal)
 
             }
-            .navigationTitle("Sign Up")
             .padding(.horizontal, 32)
             .padding(.bottom, 40)
             .opacity(animateContent ? 1 : 0)
-            .offset(y: animateContent ? 0 : 40)
+            .offset(y: animateContent ? 0 : 70)
             .animation(
                 .spring(response: 0.7, dampingFraction: 0.9)
                     .delay(0.3),
@@ -190,6 +152,7 @@ struct SignUpPageUIView: View {
             animateBackground = true
         }
     }
+    //MARK: - Sign Up DB Logic
     private func signUp() async {
         do {
             let client = SupabaseManager.shared.client
@@ -203,10 +166,6 @@ struct SignUpPageUIView: View {
                 confirmation = "Check your email for account creation..."
             }
         } catch {
-
-            print("Sign up error:", error)
-            print("Localized:", error.localizedDescription)
-
             await MainActor.run {
                 errorMessage = error.localizedDescription
             }

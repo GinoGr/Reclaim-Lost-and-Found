@@ -3,6 +3,8 @@ import Supabase
 
 struct HomePageUIView: View {
     @EnvironmentObject var appState: AppState
+    
+    @State private var animateBackground = false
 
     var body: some View {
         ZStack {
@@ -45,7 +47,7 @@ struct HomePageUIView: View {
                         JoinRoomUIView()
                     } label: {
                         HStack {
-                            Image(systemName: "person.2.fill")
+                            Image(systemName: "person.3.fill")
                             Text("Join Room")
                             Spacer()
                         }
@@ -80,11 +82,15 @@ struct HomePageUIView: View {
                 Spacer()
             }
         }
+        .frame(width: .infinity, height: .infinity, alignment: .center)
+        .onAppear{
+            animateBackground = true
+        }
     }
     private func logOut() {
         Task {
             do {
-                try await SupabaseManager.shared.client.auth.signOut()
+                try await SupabaseManager.shared.client.auth.signOut() //App Persistence
                 await MainActor.run {
                     appState.isLoggedIn = false
                 }
@@ -120,40 +126,37 @@ struct MyRoomsView: View {
                         .font(.footnote)
                 }
 
-                // CREATED ROOMS
-                DisclosureGroup(isExpanded: $isCreatedExpanded) {
+                //This is what is used to create an expandable view
+                DisclosureGroup("Created Room", isExpanded: $isCreatedExpanded) {
                     if createdRooms.isEmpty {
                         Text("You haven’t created any rooms yet.")
                             .foregroundColor(.white)
                             .padding(.vertical, 8)
                     } else {
                         VStack(spacing: 8) {
-                            ForEach(createdRooms) { room in
-                                NavigationLink {
-                                    RoomDetailView(room: room, role: "Creator")
+                            ForEach(createdRooms) { room in //List all rooms in created rooms
+                                NavigationLink { //Link each room to its respective detail page
+                                    RoomDetailView(room: room, role: "Creator") //Call the detail page with the respective information (Params)
                                 } label: {
-                                    RoomCard(room: room, role: "Creator")
+                                    RoomCard(room: room, role: "Creator") //Show the room debreif in card form using a new uiview
                                 }
                             }
                         }
                         .padding(.top, 8)
                     }
-                } label: {
-                    Text("Created Rooms")
-                        .font(.headline)
                 }
                 .padding()
                 .background(Color.white.opacity(0.06))
                 .cornerRadius(16)
 
-                DisclosureGroup(isExpanded: $isJoinedExpanded) {
+                DisclosureGroup("Joined Rooms", isExpanded: $isJoinedExpanded) {
                     if joinedMemberships.isEmpty {
                         Text("You haven’t joined any rooms yet.")
                             .foregroundColor(.white)
                             .padding(.vertical, 8)
                     } else {
                         VStack(spacing: 8) {
-                            ForEach(joinedMemberships) { joined in      // <— note: joinedMemberships, no $
+                            ForEach(joinedMemberships) { joined in
                                 NavigationLink {
                                     RoomDetailView(room: joined.rooms, role: joined.role)
                                 } label: {
@@ -163,9 +166,6 @@ struct MyRoomsView: View {
                         }
                         .padding(.top, 8)
                     }
-                } label: {
-                    Text("Joined Rooms")
-                        .font(.headline)
                 }
                 .padding()
                 .background(Color.white.opacity(0.06))
@@ -185,7 +185,7 @@ struct MyRoomsView: View {
     private func loadRooms() async {
         do {
             let client = SupabaseManager.shared.client
-            guard let user = client.auth.currentUser else { return }
+            guard let user = client.auth.currentUser else { return } //Just making sure
 
             //Rooms I created
             let myCreated: [RoomRow] = try await client
@@ -198,7 +198,7 @@ struct MyRoomsView: View {
             //Rooms I joined (via room_members → rooms)
             let memberships: [JoinedRoomRow] = try await client
                 .from("room_members")
-                .select("rooms(*), role")
+                .select("rooms(*), role")// Supabase uses the room_members foreign key to return the nested room row (rooms(*))
                 .eq("user_id", value: user.id)
                 .eq("role", value: "Member")
                 .execute()
