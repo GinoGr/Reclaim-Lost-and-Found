@@ -28,7 +28,7 @@ struct CreateRoomUIView: View {
             )
             .ignoresSafeArea()
             
-            VStack(spacing: 32) {
+            VStack(spacing: 24) {
                 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Create Room")
@@ -38,7 +38,7 @@ struct CreateRoomUIView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 24)
                 .padding(.top, 40)
-                VStack(spacing: 32) {
+                VStack(spacing: 24) {
                     
                     VStack {
                         Text("Room Name")
@@ -117,6 +117,8 @@ struct CreateRoomUIView: View {
                             }
                             .listStyle(.plain)
                             .scrollContentBackground(.hidden)
+                            .frame(maxHeight: 100)
+                            .offset(y: -20)
                         }
                         .frame(height: .infinity)
                     }
@@ -138,6 +140,10 @@ struct CreateRoomUIView: View {
                         
                 }
                 .frame(maxHeight: .infinity)
+                
+            }
+            .padding(.horizontal, 24)
+            VStack {
                 Spacer()
                 Button {
                     Task {
@@ -150,16 +156,17 @@ struct CreateRoomUIView: View {
                         Text("Create Room")
                             .fontWeight(.semibold)
                     }
-                    .padding(.vertical, 18)
-                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .frame(maxWidth: 350)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(Color.white.opacity(0.7), lineWidth: 1)
                     )
                     .foregroundColor(.white)
+                    .buttonStyle(.plain)
                 }
             }
-            .padding(.horizontal, 24)
+            
         }
     }
     private func generateRoomCode() -> String {
