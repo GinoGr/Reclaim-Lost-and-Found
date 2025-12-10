@@ -126,7 +126,14 @@ struct RoomDetailView: View {
                         } else {
                             VStack(spacing: 8) {
                                 ForEach(items) { item in
-                                    ItemRowView(item: item)
+                                    ItemRowView(
+                                        item: item,
+                                        isCreator: role == "Creator",
+                                        onDelete: {
+                                            Task {
+                                                await deleteItem(item)
+                                            }
+                                        })
                                 }
                             }
                         }
@@ -167,11 +174,33 @@ struct RoomDetailView: View {
             }
         }
     }
+    private func deleteItem(_ item: ItemRow) async {
+        do {
+            let client = SupabaseManager.shared.client
+            try await client
+                .from("items")
+                .delete()
+                .eq("id", value: item.id)
+                .execute()
+            
+            // Update UI
+            await MainActor.run {
+                items.removeAll {$0.id == item.id}
+            }
+        } catch {
+            await MainActor.run {
+                errorMessage = "Failed to delete item."
+            }
+            print("Delete error:", error)
+        }
+    }
 }
 
 struct ItemRowView: View {
     let item: ItemRow
-
+    let isCreator: Bool
+    let onDelete: () -> Void
+    
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             if let urlString = item.image_url,
@@ -215,9 +244,15 @@ struct ItemRowView: View {
         .padding()
         .background(Color.black.opacity(0.3))
         .cornerRadius(16)
+        .contextMenu {
+            Button(role: .destructive) {
+                onDelete()
+            } label: {
+                Label("Delete Item", systemImage: "trash")
+            }
+        }
     }
 }
-
 
 #Preview {
     NavigationStack {
