@@ -28,7 +28,7 @@ struct IntroUIView: View {
                         .spring(response: 0.7, dampingFraction: 0.8),
                         value: animateContent
                     ) //Springs the object into view
-                //value is the trigger
+                //value is the trigger and checks which attributes are affected by this trigger to animate those attributes
 
                 Text("Reclaim: Lost And Found")
                     .font(.largeTitle.bold())
