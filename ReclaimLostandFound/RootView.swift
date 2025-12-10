@@ -43,7 +43,7 @@ extension View { //Going to be adding my own view modifier function
             .foregroundColor(.white)
     }
     
-    //Allows a view modification especially made for textfields. Allows for custom text and formating to be placed on a textfield (Swiftui does not natively allow this) <Content: View> allows for use as a
+    //Allows a view modification especially made for textfields. Allows for custom text and formating to be placed on a textfield (Swiftui does not natively allow this) <Content: View> allows for use as a view modifier
     func placeholder<Content: View>(
             when shouldShow: Bool, //Only applies modifier when this bool is true
             alignment: Alignment = .leading,

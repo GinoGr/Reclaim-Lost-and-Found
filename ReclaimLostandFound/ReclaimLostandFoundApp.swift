@@ -16,6 +16,7 @@ struct ReclaimLostandFoundApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(appState)
+                .preferredColorScheme(.dark)
         }
     }
 }
