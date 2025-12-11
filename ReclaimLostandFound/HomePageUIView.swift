@@ -138,7 +138,14 @@ struct MyRoomsView: View {
                                 NavigationLink { //Link each room to its respective detail page
                                     RoomDetailView(room: room, role: "Creator") //Call the detail page with the respective information (Params)
                                 } label: {
-                                    RoomCard(room: room, role: "Creator") //Show the room debreif in card form using a new uiview
+                                    RoomCard(room: room, role: "Creator")
+                                        .contextMenu {
+                                            Button(role: .destructive) {
+                                                Task {await deleteRoom(room)}
+                                            } label: {
+                                                Label("Delete Room", systemImage: "trash")
+                                            }
+                                        }//Show the room debrief in card form using a new UIView and allows for deletion of room when task is called
                                 }
                             }
                         }
@@ -216,7 +223,46 @@ struct MyRoomsView: View {
             }
         }
     }
+    
+    // Deletes a room from Supabase and removes it from the local list.
+    // - Parameter room: The room the user wants to delete.
+    //
+    // This function:
+    // 1. Sends a delete request to Supabase targeting the specific room ID.
+    // 2. Because the database uses `ON DELETE CASCADE`, all related items
+    //    and room_members entries are deleted automatically.
+    // 3. Updates the UI by removing the deleted room from `createdRooms`.
+    // 4. Handles errors gracefully and displays a message in the UI.
+    private func deleteRoom(_ room: RoomRow) async {
+        do {
+            // Send DELETE request to Supabase to remove the room by its ID.
+            // Cascade delete rules in the database ensure all related data is also removed.
+            try await SupabaseManager.shared.client
+                .from("rooms")
+                .delete()
+                .eq("id", value: room.id)
+                .execute()
+            
+            // Update UI on the main thread:
+            // Remove the deleted room from the local array so the UI refreshes immediately.
+            await MainActor.run {
+                createdRooms.removeAll { $0.id == room.id }
+            }
+            
+        } catch {
+            // Log the error for debugging.
+            print("Delete room error:", error)
+            
+            // Update UI by showing an error message to the user.
+            await MainActor.run {
+                errorMessage = "Failed to delete room."
+            }
+        }
+    }
+
 }
+
+
 
 struct RoomCard: View {
     let room: RoomRow
