@@ -246,7 +246,9 @@ struct ItemRowView: View {
         .cornerRadius(16)
         .contextMenu {
             Button(role: .destructive) {
-                onDelete()
+                if isCreator {
+                    onDelete()
+                }
             } label: {
                 Label("Delete Item", systemImage: "trash")
             }
