@@ -11,18 +11,17 @@ final class AppState: ObservableObject {
         }
     }
 
-    @MainActor //This action following this property will be prioritize so it will run on main thread (run immediately)
-    private func setLoggedIn(_ loggedIn: Bool) { //Function that changes app state
-        isLoggedIn = loggedIn
-    }
-
     private func verifySession() async { //This function will check to see if a user is logged in
         let client = SupabaseManager.shared.client
         do {
             try await client.auth.session //Checks supabase keychain to verify device's authentication state. (Log in persistence) throws if no session found
-            setLoggedIn(true)
+            await MainActor.run{
+                isLoggedIn = true
+            }
         } catch {
-            setLoggedIn(false)
+            await MainActor.run{
+                isLoggedIn = false
+            }
         }
     }
 }
