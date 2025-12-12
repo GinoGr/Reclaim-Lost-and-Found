@@ -27,7 +27,7 @@ struct AddItemSheet: View {
                 Section("Photo") {
 
                     // PREVIEW
-                    if let imageData, //not swiftui friendly
+                    if let imageData, //not Swiftui/uikit friendly
                        let uiImage = UIImage(data: imageData) { //Display image in swiftui form
                         Image(uiImage: uiImage)
                             .resizable()
@@ -41,10 +41,10 @@ struct AddItemSheet: View {
                                  selection: $selectedPickerItem,
                                  matching: .images)
                         .onChange(of: selectedPickerItem) { newItem in
-                            guard let newItem else { return }
+                            guard let newItem else { return } //Did I select a photo or choose no photo
                             Task {
                                 do {
-                                    if let data = try await newItem.loadTransferable(type: Data.self) { //native photopicker function to retrieve selected photo data
+                                    if let data = try await newItem.loadTransferable(type: Data.self) { //native photopicker function to retrieve selected photo data. Async because photo source may be networked or may be costly
                                         await MainActor.run { imageData = data }
                                     }
                                 } catch {
@@ -105,8 +105,8 @@ struct AddItemSheet: View {
             let client = SupabaseManager.shared.client
 
             guard let user = client.auth.currentUser else {
-                throw NSError(domain: "AddItem", code: 0,
-                              userInfo: [NSLocalizedDescriptionKey: "Not logged in"])
+                errorMessage = "User Not Logged In"
+                return
             }
 
             // Upload image if present
@@ -121,14 +121,14 @@ struct AddItemSheet: View {
                     .from("item-photos")
                     .upload(path: path, file: data)
 
-                let publicURL = try client.storage
+                let publicURL = try client.storage //Returns URL object
                     .from("item-photos")
                     .getPublicURL(path: path)
 
                 imageURLString = publicURL.absoluteString
             }
 
-            // 2) Insert item row
+            //Insert item row
             let payload = ItemInsert(
                 room_id: room.id,
                 created_by: user.id,
