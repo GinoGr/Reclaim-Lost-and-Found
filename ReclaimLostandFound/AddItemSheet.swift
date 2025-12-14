@@ -55,13 +55,6 @@ struct AddItemSheet: View {
                                 }
                             }
                         }
-
-                    // From camera
-                    Button {
-                        showingCamera = true
-                    } label: {
-                        Label("Take Photo", systemImage: "camera")
-                    }
                 }
 
                 if let errorMessage = errorMessage {
@@ -89,12 +82,8 @@ struct AddItemSheet: View {
                     .disabled(title.isEmpty || isSaving)
                 }
             }
-            .sheet(isPresented: $showingCamera) {
-                CameraPicker(imageData: $imageData) //Calls camera wrapper class
-            }
         }
     }
-
     // MARK: - Save to Supabase
 
     private func saveItem() async {

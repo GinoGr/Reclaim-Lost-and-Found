@@ -42,7 +42,7 @@ struct HomePageUIView: View {
                     Spacer()
                 }
                 VStack(spacing: 16) {
-
+                    // MARK: Join Room/Create Room
                     NavigationLink {
                         JoinRoomUIView()
                     } label: {
@@ -58,7 +58,6 @@ struct HomePageUIView: View {
                         .foregroundColor(.black)
                         .cornerRadius(16)
                     }
-
                     NavigationLink {
                         CreateRoomUIView()
                     } label: {
@@ -75,6 +74,7 @@ struct HomePageUIView: View {
                         )
                         .foregroundColor(.white)
                     }
+                    //MARK: Display rooms view
                     MyRoomsView()
                 }
                 .padding(.horizontal, 24)
@@ -87,6 +87,7 @@ struct HomePageUIView: View {
             animateBackground = true
         }
     }
+    //MARK: Logout function
     private func logOut() {
         Task {
             do {
@@ -127,6 +128,7 @@ struct MyRoomsView: View {
                 }
 
                 //This is what is used to create an expandable view
+                //MARK: Disclosure groups
                 DisclosureGroup("Created Room", isExpanded: $isCreatedExpanded) {
                     if createdRooms.isEmpty {
                         Text("You haven’t created any rooms yet.")
