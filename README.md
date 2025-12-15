@@ -1,7 +1,7 @@
-#**ReClaim: Lost and Found Project Report**  
+# **ReClaim: Lost and Found Project Report**  
 **By Kevin and Gino**
 
-#1. **Project Goals:**
+# 1. **Project Goals:**
 
 The goal of ReClaim was to design and implement a mobile Swift-based lost and found application that would simplify the process of reporting, locating, and reclaiming lost items on a smaller/private scale. Traditional lost and found systems are often fragmented, manual, and inefficient, resulting in delays and a suboptimal system. ReClaim was built with the aim of modernizing this process through a centralized mobile platform.  
 The primary objectives of this project included:
@@ -14,7 +14,7 @@ The primary objectives of this project included:
 
 Through the usage of Swift, ReClaim delivers a scalable and user-friendly solution that improves the process of finding lost items in a more private setting. We achieved this by having users set up personal rooms with passwords that they could share with others. Within these rooms, users could add items that had been lost, allowing all members of the room to view them.
 
-#2. **Application Functionalities**
+# 2. **Application Functionalities**
 
 ReClaim provides a set of core functionalities supported by Supabase as its backend database and authentication service. Supabase enables real-time data storage, user authentication, and secure access control, allowing the application to function reliably across sessions and devices.  
 **User Authentication (Supabase)**
@@ -39,7 +39,7 @@ ReClaim provides a set of core functionalities supported by Supabase as its back
 
 * Supabase allows changes to be reflected immediately across the application
 
-#3. **Architecture and Design/Logical Flow Diagram**
+# 3. **Architecture and Design/Logical Flow Diagram**
 
 **![][image1]**  
 The ReClaim application follows a modular, SwiftUI-based architecture that separates user interface components, application state, data models, and backend communication. This design improves readability, maintainability, and scalability while supporting asynchronous database operations through Supabase.  
@@ -125,7 +125,7 @@ Key design principles used in ReClaim include:
 * Reusable components and styles for consistency  
 * Scalable architecture supporting future features such as notifications or item claiming workflows
 
-#4. **Project Documentation**
+# 4. **Project Documentation**
 
 The complete source code, along with comments, for ReClaim is available on GitHub. Here is a link to the repository.  
 [ReClaim GitHub Repository](https://github.com/GinoGr/Reclaim-Lost-and-Found)  
