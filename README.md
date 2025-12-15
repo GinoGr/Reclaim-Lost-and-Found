@@ -1,5 +1,5 @@
 **ReClaim: Lost and Found Project Report**  
-**By Kevin Nguyen and Gino Grandin**
+**By Kevin and Gino**
 
 1. **Project Goals:**
 
